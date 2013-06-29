@@ -7,4 +7,4 @@
 + 製作作者: <ratchet@ptt.cc> / <ratchet0623@ifabao.com>
 
 ### 資料搜集
-1. [人物介紹](http://github.com/Rplus/the-end-of-the-Eastern-Wu-dynasty/blob/master/%E4%BA%BA%E7%89%A9%E4%BB%8B%E7%B4%B9.md)
+1. [人物介紹](https://github.com/Rplus/the-end-of-the-Eastern-Wu-dynasty/wiki/%E4%BA%BA%E7%89%A9%E4%BB%8B%E7%B4%B9)
