@@ -66,17 +66,19 @@ h3{
     </li>
 </script>
 <script>
-  var tpl = document.getElementById('people-temp').innerText,
+  var tpl = document.getElementById('people-temp').text,
   html = '';
 
   $.ajax({
     url: 'https://spreadsheets.google.com/feeds/list/0AqMUl4JFkRfldFRZbkk2YlBJVFVJQjYwZ1hoV2tQWHc/od6/public/values?alt=json',
-    type: 'POST',
+    // type: 'GET', // default: GET
     dataType: 'jsonp',
+    cache: true,
+    cache: false, // for develop version
     // complete: function (xhr, textStatus) {
     //   //called when complete
     // },
-    success: function (data, textStatus, xhr) {
+    success: function (data) {
       var i, max,
           dd = data.feed.entry;
       max = dd.length;
@@ -84,7 +86,6 @@ h3{
           arr = [];
 
       for (i = 0; i < max; i++) {
-        var _obj = {};
         var _tpl = tpl;
         for(var j=0; j < xo.length; j++) {
           var _pattern = new RegExp('{\\$' + xo[j] + '}', 'g');
@@ -94,8 +95,9 @@ h3{
       }
       $('body ul').html(html);
     },
-    error: function (xhr, textStatus, errorThrown) {
+    error: function (xhr) {
       //called when there is an error
+      $('body ul').html('<li>== 取值連線異常 ==</li>')
     }
   });
 </script>
