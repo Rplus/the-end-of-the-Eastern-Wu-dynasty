@@ -1,78 +1,135 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<title>吳末傳</title>
-<!-- <link rel="stylesheet" href="normalize.css"> -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>吳末傳</title>
 <style>
-body{
+body {
   margin: 0;
   color: #333;
 }
-ul{
+
+h1 {
+  text-align: center;
+}
+
+.chars {
+  padding-left: 5vw;
+  padding-right: 5vw;
   list-style: none;
 }
-li.name{
+
+.char {
+  min-height: 7.5rem;
+  margin-bottom: 3rem;
+  padding-left: 9rem;
+  background-image: linear-gradient(#eee, #eee);
   background-repeat: no-repeat;
-  padding-left: 130px;
-  min-height: 120px;
-  margin-bottom: 30px;
+  background-size: 120px 120px;
 }
-blockquote{
+
+.char__quote {
   margin: 10px;
   padding-left: 10px;
   color: #777;
   border-left: 4px solid #DDD;
 }
-h3{
+
+.char__name {
   margin: 0 0 5px;
 }
+
+.cahr__camp,
+.char__job {
+  display: inline-block;
+  margin-bottom: .25rem;
+}
+
+.cahr__camp:not(:empty)::before,
+.char__job:not(:empty)::before {
+  content: ' - ';
+}
+
+.char__name:empty:before,
+.cahr__camp:empty::before,
+.char__job:empty::before,
+.char__quote:empty::before,
+.char__intro:empty:before,
+.char__intro:empty:after {
+  content: '.';
+  display: inline-block;
+  min-width: 5em;
+  margin-right: .5em;
+  background-color: currentColor;
+  opacity: .2;
+}
+
+.char__intro:empty:before {
+  width: 18em;
+}
+
+@media (max-width: 480px) {
+  .char {
+    margin-bottom: 5rem;
+    padding: 8rem 0 0 3vw;
+    background-position-x: 50%;
+  }
+
+  .char__name {
+    text-align: center;
+  }
+
+  .char__meta {
+    text-align: right;
+  }
+
+  .char__quote {
+    margin-left: -8vw;
+    margin-right: -1rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border-left-width: .5rem;
+  }
+}
+
 </style>
 </head>
 <body>
-  <ul></ul>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- data build -->
-
+  <h1>吳末傳角色一覽</h1>
+  <ul class="chars">
+    <li class="char">
+      <h3 class="char__name"></h3>
+      <div class="char__meta">
+        <span class="cahr__camp"></span>
+        <span class="char__job"></span>
+      </div>
+      <blockquote class="char__quote"></blockquote>
+      <div class="char__intro"></div>
+    </li>
+  </ul>
 <script>
-  let dataUrl = 'https://spreadsheets.google.com/feeds/list/0AqMUl4JFkRfldFRZbkk2YlBJVFVJQjYwZ1hoV2tQWHc/od6/public/values?alt=json';
+  let dataUrl = './character.json';
+
   fetch(dataUrl).then((rawData) => rawData.json()).then((data) => {
-    let html = data.feed.entry.map((_char) => {
-      let [name, quote, camp, job, intro] = ['人名', '名言', '所屬方', '職業', '註'].map((i) => _char[`gsx$${i}`].$t);
-      return (`
-        <li class="name" style="background-image: url('./images/${name}.png');">
-          <h3>${name}</h3> - ${camp} - ${job}
-          <blockquote>${quote}</blockquote>
-          <div>${intro}</div>
+    let html = data.map((_char) => {
+      return `
+        <li class="char" style="background-image: url('./images/${_char.name}.png');">
+          <h3 class="char__name">${_char.name}</h3>
+          <div class="char__meta">
+            <span class="cahr__camp">${_char.camp}</span>
+            <span class="char__job">${_char.job}</span>
+          </div>
+          <blockquote class="char__quote">${_char.quote}</blockquote>
+          <div class="char__intro">${_char.intro.replace(/\n/g, '<br>')}</div>
         </li>
-      `);
+      `;
     });
-    document.querySelector('body ul').innerHTML = html.join('');
+    document.querySelector('.chars').innerHTML = html.join('');
   })
   .catch(() => {
-    document.querySelector('body ul').innerHTML = '<li>== 取值連線異常 ==</li>';
+    document.querySelector('.chars').innerHTML += '<li>== 取值連線異常 ==</li>';
   });
 </script>
 </body>
