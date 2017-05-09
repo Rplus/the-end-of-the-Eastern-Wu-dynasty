@@ -56,49 +56,23 @@ h3{
 
 <!-- data build -->
 
-<script>document.write('<script src="' + ('__proto__' in {} ? 'http://cdnjs.cloudflare.com/ajax/libs/zepto/1.0/zepto.min.js' :  'http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js') + '"><\/script>');</script>
-
-<script type="text/people-temp" id="people-temp">
-  <li class="name" style="background-image: url(http://dl.dropboxusercontent.com/u/187714845/wu/{$人名}.png);">
-    <h3>{$人名}</h3> - {$所屬方} - {$職業}
-    <blockquote>{$名言}</blockquote>
-    <div>{$註}</div>
-    </li>
-</script>
 <script>
-  var tpl = document.getElementById('people-temp').text,
-  html = '';
-
-  $.ajax({
-    url: 'https://spreadsheets.google.com/feeds/list/0AqMUl4JFkRfldFRZbkk2YlBJVFVJQjYwZ1hoV2tQWHc/od6/public/values?alt=json',
-    // type: 'GET', // default: GET
-    dataType: 'jsonp',
-    cache: true,
-    cache: false, // for develop version
-    // complete: function (xhr, textStatus) {
-    //   //called when complete
-    // },
-    success: function (data) {
-      var i, max,
-          dd = data.feed.entry;
-      max = dd.length;
-      var xo = ['人名', '所屬方', '職業', '名言', '註'],
-          arr = [];
-
-      for (i = 0; i < max; i++) {
-        var _tpl = tpl;
-        for(var j=0; j < xo.length; j++) {
-          var _pattern = new RegExp('{\\$' + xo[j] + '}', 'g');
-          _tpl = _tpl.replace(_pattern, dd[i]['gsx$'+xo[j]].$t);
-        }
-        html += _tpl;
-      }
-      $('body ul').html(html);
-    },
-    error: function (xhr) {
-      //called when there is an error
-      $('body ul').html('<li>== 取值連線異常 ==</li>')
-    }
+  let dataUrl = 'https://spreadsheets.google.com/feeds/list/0AqMUl4JFkRfldFRZbkk2YlBJVFVJQjYwZ1hoV2tQWHc/od6/public/values?alt=json';
+  fetch(dataUrl).then((rawData) => rawData.json()).then((data) => {
+    let html = data.feed.entry.map((_char) => {
+      let [name, quote, camp, job, intro] = ['人名', '名言', '所屬方', '職業', '註'].map((i) => _char[`gsx$${i}`].$t);
+      return (`
+        <li class="name" style="background-image: url('./images/${name}.png');">
+          <h3>${name}</h3> - ${camp} - ${job}
+          <blockquote>${quote}</blockquote>
+          <div>${intro}</div>
+        </li>
+      `);
+    });
+    document.querySelector('body ul').innerHTML = html.join('');
+  })
+  .catch(() => {
+    document.querySelector('body ul').innerHTML = '<li>== 取值連線異常 ==</li>';
   });
 </script>
 </body>
